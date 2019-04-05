@@ -1,12 +1,21 @@
 #include <stdio.h>
 
-int main() {
-    FILE *input;
+const char cypher();
+const char decypher();
 
-    input = fopen("input.txt", "r");
+void main() {
+    FILE *input;
+    char inputText[1024];
+
+    input = fopen("Resources/input.txt", "r");
     if(input == NULL){
         perror("File Input");
     }
 
-    return 0;
+    fscanf(input, "%[^\n]", inputText);
+    printf("%s", &inputText);
+
+
 }
+
+
