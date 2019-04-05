@@ -1,6 +1,12 @@
 #include <stdio.h>
 
 int main() {
-    printf("Hello, World!\n");
+    FILE *input;
+
+    input = fopen("input.txt", "r");
+    if(input == NULL){
+        perror("File Input");
+    }
+
     return 0;
 }
