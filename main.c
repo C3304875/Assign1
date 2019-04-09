@@ -17,15 +17,15 @@ void main() {
         perror("File Input");
     }
 
-    printf("1. Encrypt input Message || 2. Exit Programme.\n");
-    printf("Please Make a Selection: \n");
-    scanf("%d", &selector);
-
     // Read input into char array cypherText.
     while (!feof(input)) {
         fscanf(input, "%c", &cypherText[i]);
         i++;
     }
+
+    printf("1. Rotation Cypher Encryption\n2. Exit Programme\n3. UNDEFINED\n");
+    printf("Please Make a Selection: \n");
+    scanf("%d", &selector);
 
     switch(selector){
         case 1:
@@ -59,9 +59,9 @@ char encryptRotationCypher(char *cypherText, int rotationAmount){
 
     for(i = 0; cypherText[i] != '\0'; i++){
         if (cypherText[i] >= 65 && cypherText[i] <= 90) {
-            if(cypherText[i] == 65)
+            if(cypherText[i] <= 65)
                 cypherText[i] = 90 - rotationAmount;
-            if(cypherText[i] == 90)
+            if(cypherText[i] >= 90)
                 cypherText[i] = 65 - rotationAmount;
             cypherText[i] += rotationAmount;
             result[i] = cypherText[i];
