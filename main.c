@@ -3,11 +3,11 @@
 
 #include <stdio.h>
 
-char encryptRotationCypher(char *inputText, int rotationAmount);
+char encryptRotationCypher(char *cypherText, int rotationAmount);
 
 void main() {
     FILE *input, *output;
-    char inputText[1024], outputText, selector = '1';
+    char cypherText[1024], outputText[1024], selector = '1';
     int i = 0, rotationAmount;
 
     // Initialise input & output files.
@@ -19,43 +19,43 @@ void main() {
 
     printf("1. Encrypt input Message || 2. Exit Programme.\n");
     printf("Please Make a Selection: \n");
+    scanf("%c", selector);
 
-    // Read input into char array inputText.
+    // Read input into char array cypherText.
     while (!feof(input)) {
-        fscanf(input, "%c", &inputText[i]);
+        fscanf(input, "%c", &cypherText[i]);
         i++;
     }
 
     switch(selector){
         case '1':
-            printf("Please enter rotation amount: ");
-            rotationAmount = scanf("%d", rotationAmount);
-            outputText = encryptRotationCypher(&inputText, rotationAmount);
-            printf("%s", outputText);
+            printf("Please enter rotation amount: \n");
+            scanf("%d", rotationAmount);
+            rotationAmount = 0;//scanf("%d", rotationAmount);
+            encryptRotationCypher(&cypherText, rotationAmount);
             break;
         default: printf("yeet");
     }
 
     // Test output
-    for (i = 0; inputText[i] != '\0'; i++) {
-        //printf("%s", outputText);
-       // fprintf(output, "%s", *outputText);
-
+    for (i = 0; cypherText[i] != '\0'; i++) {
+        printf("%c", cypherText[i]);
     }
-
 }
 
-char encryptRotationCypher(char *inputText, int rotationAmount){
+char encryptRotationCypher(char *cypherText, int rotationAmount){
     int i;
+    char result[1024];
 
-    for(i = 0; inputText[i] != '\0'; i++){
-        if (inputText[i] >= 65 && inputText[i] <= 90) {
-            if(inputText[i] == 65)
-                inputText[i] = 90 - rotationAmount;
-            if(inputText[i] == 90)
-                inputText[i] = 65 - rotationAmount;
-            inputText[i] += rotationAmount;
+    for(i = 0; cypherText[i] != '\0'; i++){
+        if (cypherText[i] >= 65 && cypherText[i] <= 90) {
+            if(cypherText[i] == 65)
+                cypherText[i] = 90 - rotationAmount;
+            if(cypherText[i] == 90)
+                cypherText[i] = 65 - rotationAmount;
+            cypherText[i] += rotationAmount;
+            result[i] = cypherText[i];
         }
     }
-
+    return result;
 }
