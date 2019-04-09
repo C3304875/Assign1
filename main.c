@@ -7,8 +7,8 @@ char encryptRotationCypher(char *cypherText, int rotationAmount);
 
 void main() {
     FILE *input, *output;
-    char cypherText[1024], outputText[1024], selector = '1';
-    int i = 0, rotationAmount;
+    char cypherText[1024], outputText[1024];
+    int i = 0, selector, rotationAmount;
 
     // Initialise input & output files.
     output = fopen("Resources/output.txt", "w");
@@ -19,7 +19,7 @@ void main() {
 
     printf("1. Encrypt input Message || 2. Exit Programme.\n");
     printf("Please Make a Selection: \n");
-    scanf("%c", selector);
+    scanf("%d", &selector);
 
     // Read input into char array cypherText.
     while (!feof(input)) {
@@ -28,13 +28,23 @@ void main() {
     }
 
     switch(selector){
-        case '1':
+        case 1:
             printf("Please enter rotation amount: \n");
-            scanf("%d", rotationAmount);
-            rotationAmount = 0;//scanf("%d", rotationAmount);
+            scanf("%d", &rotationAmount);
             encryptRotationCypher(&cypherText, rotationAmount);
             break;
-        default: printf("yeet");
+        case 2:
+            printf("Case 2.\n");
+            break;
+        case 3:
+            printf("Case 3.\n");
+            break;
+        case 4:
+            printf("Case 4.\n");
+            break;
+        default:
+            printf("Please Enter a Valid Selection.\n");
+            break;
     }
 
     // Test output
