@@ -7,85 +7,85 @@ char encryptRotationCypher(char *cypherText, int rotationAmount);
 char decryptRotationCypher(char *cypherText, int rotationAmount);
 
 void main() {
-    FILE *input, *output;
-    char cypherText[1024], outputText[1024];
-    int i = 0, selector, rotationAmount;
+   FILE *input, *output;
+   char cypherText[1024], outputText[1024];
+   int i = 0, selector, rotationAmount;
 
-    // Initialise input & output files.
-    output = fopen("Resources/output.txt", "w");
-    input = fopen("Resources/input.txt", "r");
-    if (input == NULL) {
-        perror("File Input");
-    }
+   // Initialise input & output files.
+   output = fopen("Resources/output.txt", "w");
+   input = fopen("Resources/input.txt", "r");
+   if (input == NULL) {
+      perror("File Input");
+   }
 
-    // Read input into char array cypherText.
-    while (!feof(input)) {
-        fscanf(input, "%c", &cypherText[i]);
-        i++;
-    }
+   // Read input into char array cypherText.
+   while (!feof(input)) {
+      fscanf(input, "%c", &cypherText[i]);
+      i++;
+   }
 
-    printf("1. Rotation Cypher Encryption\n2. Rotation Cypher Decryption\n3. Exit Programme\n4. UNDEFINED\n");
-    printf("Please Make a Selection: \n");
-    scanf("%d", &selector);
+   printf("1. Rotation Cypher Encryption\n2. Rotation Cypher Decryption\n3. Exit Programme\n4. UNDEFINED\n");
+   printf("Please Make a Selection: \n");
+   scanf("%d", &selector);
 
-    switch(selector){
-        case 1:
-            printf("Please enter rotation amount: \n");
-            scanf("%d", &rotationAmount);
-            encryptRotationCypher(&cypherText, rotationAmount);
-            break;
-        case 2:
-            printf("Please enter rotation amount: \n");
-            scanf("%d", &rotationAmount);
-            decryptRotationCypher(&cypherText, rotationAmount);
-            break;
-        case 3:
-            printf("Case 3.\n");
-            break;
-        case 4:
-            printf("Case 4.\n");
-            break;
-        default:
-            printf("Please Enter a Valid Selection.\n");
-            break;
-    }
+   switch (selector) {
+      case 1:
+         printf("Please enter rotation amount: \n");
+         scanf("%d", &rotationAmount);
+         encryptRotationCypher(&cypherText, rotationAmount);
+         break;
+      case 2:
+         printf("Please enter rotation amount: \n");
+         scanf("%d", &rotationAmount);
+         decryptRotationCypher(&cypherText, rotationAmount);
+         break;
+      case 3:
+         printf("Case 3.\n");
+         break;
+      case 4:
+         printf("Case 4.\n");
+         break;
+      default:
+         printf("Please Enter a Valid Selection.\n");
+         break;
+   }
 
-    // Test output
-    for (i = 0; cypherText[i] != '\0'; i++) {
-        printf("%c", cypherText[i]);
-    }
+   // Test output
+   for (i = 0; cypherText[i] != '\0'; i++) {
+      printf("%c", cypherText[i]);
+   }
 }
 
-char encryptRotationCypher(char *cypherText, int rotationAmount){
-    int i;
-    char result[1024];
+char encryptRotationCypher(char *cypherText, int rotationAmount) {
+   int i;
+   char result[1024];
 
-    for(i = 0; cypherText[i] != '\0'; i++){
-        if (cypherText[i] >= 65 && cypherText[i] <= 90) {
-            if(cypherText[i] <= 65)
-                cypherText[i] = 90 - rotationAmount;
-            if(cypherText[i] >= 90)
-                cypherText[i] = 65 - rotationAmount;
-            cypherText[i] += rotationAmount;
-            result[i] = cypherText[i];
-        }
-    }
-    return result;
+   for (i = 0; cypherText[i] != '\0'; i++) {
+      if (cypherText[i] >= 65 && cypherText[i] <= 90) {
+         if (cypherText[i] < 65)
+            cypherText[i] = 90 - rotationAmount;
+         if (cypherText[i] >= 90)
+            cypherText[i] = 65 - rotationAmount;
+         cypherText[i] += rotationAmount;
+         result[i] = cypherText[i];
+      }
+   }
+   return result;
 }
 
-char decryptRotationCypher(char *cypherText, int rotationAmount){
-    int i;
-    char result[1024];
+char decryptRotationCypher(char *cypherText, int rotationAmount) {
+   int i;
+   char result[1024];
 
-    for(i = 0; cypherText[i] != '\0'; i++){
-        if (cypherText[i] >= 65 && cypherText[i] <= 90) {
-            if(cypherText[i] <= 65)
-                cypherText[i] = 90 - rotationAmount;
-            if(cypherText[i] >= 90)
-                cypherText[i] = 65 - rotationAmount;
-            cypherText[i] -= rotationAmount;
-            result[i] = cypherText[i];
-        }
-    }
-    return result;
+   for (i = 0; cypherText[i] != '\0'; i++) {
+      if (cypherText[i] >= 65 && cypherText[i] <= 90) {
+         if (cypherText[i] == 65)
+            cypherText[i] = 9;
+         if (cypherText[i] > 90)
+            cypherText[i] = 65 - rotationAmount;
+         cypherText[i] += rotationAmount;
+         result[i] = cypherText[i];
+      }
+   }
+   return result;
 }
