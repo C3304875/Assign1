@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 char encryptRotationCypher(char *cypherText, int rotationAmount);
+char decryptRotationCypher(char *cypherText, int rotationAmount);
 
 void main() {
     FILE *input, *output;
@@ -23,7 +24,7 @@ void main() {
         i++;
     }
 
-    printf("1. Rotation Cypher Encryption\n2. Exit Programme\n3. UNDEFINED\n");
+    printf("1. Rotation Cypher Encryption\n2. Rotation Cypher Decryption\n3. Exit Programme\n4. UNDEFINED\n");
     printf("Please Make a Selection: \n");
     scanf("%d", &selector);
 
@@ -34,7 +35,9 @@ void main() {
             encryptRotationCypher(&cypherText, rotationAmount);
             break;
         case 2:
-            printf("Case 2.\n");
+            printf("Please enter rotation amount: \n");
+            scanf("%d", &rotationAmount);
+            decryptRotationCypher(&cypherText, rotationAmount);
             break;
         case 3:
             printf("Case 3.\n");
@@ -64,6 +67,23 @@ char encryptRotationCypher(char *cypherText, int rotationAmount){
             if(cypherText[i] >= 90)
                 cypherText[i] = 65 - rotationAmount;
             cypherText[i] += rotationAmount;
+            result[i] = cypherText[i];
+        }
+    }
+    return result;
+}
+
+char decryptRotationCypher(char *cypherText, int rotationAmount){
+    int i;
+    char result[1024];
+
+    for(i = 0; cypherText[i] != '\0'; i++){
+        if (cypherText[i] >= 65 && cypherText[i] <= 90) {
+            if(cypherText[i] <= 65)
+                cypherText[i] = 90 - rotationAmount;
+            if(cypherText[i] >= 90)
+                cypherText[i] = 65 - rotationAmount;
+            cypherText[i] -= rotationAmount;
             result[i] = cypherText[i];
         }
     }
