@@ -64,8 +64,8 @@ char encryptRotationCypher(char *cypherText, int rotationAmount) {
       if (cypherText[i] >= 65 && cypherText[i] <= 90) {
          if (cypherText[i] < 65)
             cypherText[i] = 90 - rotationAmount;
-         if (cypherText[i] >= 90)
-            cypherText[i] = 65 - rotationAmount;
+         else if (cypherText[i] >= 90)
+            cypherText[i] = 65 + rotationAmount;
          cypherText[i] += rotationAmount;
          result[i] = cypherText[i];
       }
@@ -79,10 +79,10 @@ char decryptRotationCypher(char *cypherText, int rotationAmount) {
 
    for (i = 0; cypherText[i] != '\0'; i++) {
       if (cypherText[i] >= 65 && cypherText[i] <= 90) {
-         if (cypherText[i] == 65)
-            cypherText[i] = 9;
-         if (cypherText[i] > 90)
-            cypherText[i] = 65 - rotationAmount;
+         if (cypherText[i] <= 65)
+            cypherText[i] = 90 - rotationAmount;
+         else if (cypherText[i] >= 90)
+         cypherText[i] = 65 - rotationAmount;
          cypherText[i] += rotationAmount;
          result[i] = cypherText[i];
       }
