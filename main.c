@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-char encryptRotationCypher(char *cypherText, int rotationAmount);
+void encryptRotationCypher(char *cypherText, char *outputText, int rotationAmount);
 char decryptRotationCypher(char *cypherText, int rotationAmount);
 
 void main() {
@@ -30,9 +30,9 @@ void main() {
 
    switch (selector) {
       case 1:
-         printf("Please enter rotation amount: \n");
+         printf("Please enter rotation amount between -26 & 26: \n");
          scanf("%d", &rotationAmount);
-         encryptRotationCypher(&cypherText, rotationAmount);
+         encryptRotationCypher(&cypherText, &outputText, rotationAmount);
          break;
       case 2:
          printf("Please enter rotation amount: \n");
@@ -52,25 +52,27 @@ void main() {
 
    // Test output
    for (i = 0; cypherText[i] != '\0'; i++) {
-      printf("%c", cypherText[i]);
+      printf("%c", outputText[i]);
    }
 }
 
-char encryptRotationCypher(char *cypherText, int rotationAmount) {
+void encryptRotationCypher(char *cypherText, char *outputText, int rotationAmount) { // e(x) = (m + k)(mod 26)
    int i;
-   char result[1024];
 
    for (i = 0; cypherText[i] != '\0'; i++) {
-      if (cypherText[i] >= 65 && cypherText[i] <= 90) {
-         if (cypherText[i] < 65)
-            cypherText[i] = 90 - rotationAmount;
-         else if (cypherText[i] >= 90)
-            cypherText[i] = 65 + rotationAmount;
-         cypherText[i] += rotationAmount;
-         result[i] = cypherText[i];
+      if (cypherText[i] >= 'A' && cypherText[i] <= 'Z') {
+         outputText[i] = cypherText[i] + (rotationAmount % 26);
+         if (outputText[i] > 'Z'){
+            outputText[i] = ('A' - rotationAmount) + (rotationAmount % 26);
+         }
+         if (outputText[i] < 'A'){
+            outputText[i] = ('Z' - rotationAmount)  + (rotationAmount % 26);
+         }
+      }
+      else {
+         outputText[i] = cypherText[i]; // Skips any non-alphabet characters
       }
    }
-   return result;
 }
 
 char decryptRotationCypher(char *cypherText, int rotationAmount) {
