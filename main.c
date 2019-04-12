@@ -3,10 +3,10 @@
 
 #include <stdio.h>
 
-void encryptRotationCypher(char *cypherText, char *outputText, int rotationAmount);
-char decryptRotationCypher(char *cypherText, int rotationAmount);
+void encryptRotationCypher(const char *cypherText, char *outputText, int rotationAmount);
+void decryptRotationCypher(const char *cypherText, char *outputText, int rotationAmount);
 
-void main() {
+void main(){
    FILE *input, *output;
    char cypherText[1024], outputText[1024];
    int i = 0, selector, rotationAmount;
@@ -14,12 +14,12 @@ void main() {
    // Initialise input & output files.
    output = fopen("Resources/output.txt", "w");
    input = fopen("Resources/input.txt", "r");
-   if (input == NULL) {
+   if (input == NULL){
       perror("File Input");
    }
 
    // Read input into char array cypherText.
-   while (!feof(input)) {
+   while (!feof(input)){
       fscanf(input, "%c", &cypherText[i]);
       i++;
    }
@@ -28,16 +28,16 @@ void main() {
    printf("Please Make a Selection: \n");
    scanf("%d", &selector);
 
-   switch (selector) {
+   switch (selector){
       case 1:
          printf("Please enter rotation amount between -26 & 26: \n");
          scanf("%d", &rotationAmount);
          encryptRotationCypher(&cypherText, &outputText, rotationAmount);
          break;
       case 2:
-         printf("Please enter rotation amount: \n");
+         printf("Please enter rotation amount between -26 & 26: \n");
          scanf("%d", &rotationAmount);
-         decryptRotationCypher(&cypherText, rotationAmount);
+         decryptRotationCypher(&cypherText, &outputText, rotationAmount);
          break;
       case 3:
          printf("Case 3.\n");
@@ -51,19 +51,19 @@ void main() {
    }
 
    // Test output
-   for (i = 0; cypherText[i] != '\0'; i++) {
+   for (i = 0; cypherText[i] != '\0'; i++){
       printf("%c", outputText[i]);
    }
 }
 
-void encryptRotationCypher(char *cypherText, char *outputText, int rotationAmount) { // e(x) = (m + k)(mod 26)
+void encryptRotationCypher(const char *cypherText, char *outputText, int rotationAmount){ // e(x) = (m + k)(mod 26)
    int i;
 
-   for (i = 0; cypherText[i] != '\0'; i++) {
-      if (cypherText[i] >= 'A' && cypherText[i] <= 'Z') {
+   for (i = 0; cypherText[i] != '\0'; i++){
+      if (cypherText[i] >= 'A' && cypherText[i] <= 'Z'){
          outputText[i] = cypherText[i] + (rotationAmount % 26);
-         if (outputText[i] > 'Z'){
-            outputText[i] = ('A' - rotationAmount) + (rotationAmount % 26);
+         if (cypherText[i] > 'Z'){
+            outputText[i] = 'A' + (rotationAmount % 26);
          }
          if (outputText[i] < 'A'){
             outputText[i] = ('Z' - rotationAmount)  + (rotationAmount % 26);
@@ -75,19 +75,23 @@ void encryptRotationCypher(char *cypherText, char *outputText, int rotationAmoun
    }
 }
 
-char decryptRotationCypher(char *cypherText, int rotationAmount) {
+void decryptRotationCypher(const char *cypherText, char *outputText, int rotationAmount){ // d(c) = (c − k)(mod 26)
    int i;
-   char result[1024];
 
-   for (i = 0; cypherText[i] != '\0'; i++) {
-      if (cypherText[i] >= 65 && cypherText[i] <= 90) {
-         if (cypherText[i] <= 65)
-            cypherText[i] = 90 - rotationAmount;
-         else if (cypherText[i] >= 90)
-         cypherText[i] = 65 - rotationAmount;
-         cypherText[i] += rotationAmount;
-         result[i] = cypherText[i];
+   for (i = 0; cypherText[i] != '\0'; i++){
+      if (cypherText[i] >= 'A' && cypherText[i] <= 'Z'){
+         outputText[i] = cypherText[i] - (rotationAmount % 26);
+         if (cypherText[i] >= 'Z'){
+            outputText[i] = 'A' + (rotationAmount % 26);
+            break;
+         }
+         if (cypherText[i] < 'A'){
+            outputText[i] = ('Z' - rotationAmount)  + (rotationAmount % 26);
+            break;
+         }
+      }
+      else {
+         outputText[i] = cypherText[i]; // Skips any non-alphabet characters
       }
    }
-   return result;
 }
