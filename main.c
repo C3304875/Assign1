@@ -62,11 +62,11 @@ void encryptRotationCypher(const char *cypherText, char *outputText, int rotatio
    for (i = 0; cypherText[i] != '\0'; i++){
       if (cypherText[i] >= 'A' && cypherText[i] <= 'Z'){
          outputText[i] = cypherText[i] + (rotationAmount % 26);
-         if (cypherText[i] > 'Z'){
-            outputText[i] = 'A' + (rotationAmount % 26);
+         if (outputText[i] > 'Z'){
+            outputText[i] = ('A' - 1 + (rotationAmount % 26));
          }
          if (outputText[i] < 'A'){
-            outputText[i] = ('Z' - rotationAmount)  + (rotationAmount % 26);
+            outputText[i] = ('Z' - 1 + (rotationAmount % 26));
          }
       }
       else {
