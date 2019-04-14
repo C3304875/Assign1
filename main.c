@@ -5,6 +5,8 @@
 
 void encryptRotationCypher(const char *cypherText, char *outputText, int rotationAmount);
 void decryptRotationCypher(const char *cypherText, char *outputText, int rotationAmount);
+void encryptSubstitutionCypher(const char *cypherText, char *outputText);
+void decryptSubstitutionCypher(const char *cypherText, char *outputText);
 
 void main(){
    FILE *input, *output;
@@ -25,22 +27,22 @@ void main(){
    }
 
    printf("1. Rotation Cypher Encryption\n2. Rotation Cypher Decryption\n3. Exit Programme\n4. UNDEFINED\n");
-   printf("Please Make a Selection: \n");
+   printf("\nPlease Make a Selection: \n");
    scanf("%d", &selector);
 
    switch (selector){
       case 1:
-         printf("Please enter rotation amount between -26 & 26: \n");
+         printf("Please enter rotation amount between 0 & 25: \n");
          scanf("%d", &rotationAmount);
-         encryptRotationCypher(&cypherText, &outputText, rotationAmount);
+         encryptRotationCypher(cypherText, outputText, rotationAmount);
          break;
       case 2:
-         printf("Please enter rotation amount between -26 & 26: \n");
+         printf("Please enter rotation amount between 0 & 25: \n");
          scanf("%d", &rotationAmount);
-         decryptRotationCypher(&cypherText, &outputText, rotationAmount);
+         decryptRotationCypher(cypherText, outputText, rotationAmount);
          break;
       case 3:
-         printf("Case 3.\n");
+         encryptSubstitutionCypher(cypherText, outputText);
          break;
       case 4:
          printf("Case 4.\n");
@@ -51,9 +53,9 @@ void main(){
    }
 
    // Test output
-   for (i = 0; cypherText[i] != '\0'; i++){
-      printf("%c", outputText[i]);
-   }
+ //  for (i = 0; cypherText[i] != '\0'; i++){
+   //   printf("%c", outputText[i]);
+  // }
 }
 
 void encryptRotationCypher(const char *cypherText, char *outputText, int rotationAmount){ // e(x) = (m + k)(mod 26)
@@ -92,4 +94,18 @@ void decryptRotationCypher(const char *cypherText, char *outputText, int rotatio
          outputText[i] = cypherText[i]; // Skips any non-alphabet characters
       }
    }
+}
+
+void encryptSubstitutionCypher(const char *cypherText, char *outputText){
+   const char sub[26] = {"QAZXSWEDCVFRTGBNHYUJMKILOP"};
+   const char orig[26] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
+   int i;
+
+   for (i = 0; sub[i] != '\0'; i++){
+      printf("%c", sub[i]);
+   }
+}
+
+void decryptSubstitutionCypher(const char *cypherText, char *outputText){
+
 }
