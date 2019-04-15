@@ -1,3 +1,5 @@
+// Matthew Maiden
+// C3304875
 // ENGG1003 Assignment 1
 // Specification Document: https://uonline.newcastle.edu.au/bbcswebdav/pid-4089777-dt-content-rid-20660523_1/courses/CRS.126462.2019.S1/project1%281%29.pdf
 
@@ -8,7 +10,7 @@ void decryptRotationCypher(const char *cypherText, char *outputText, int rotatio
 void encryptSubstitutionCypher(const char *cypherText, char *outputText);
 void decryptSubstitutionCypher(const char *cypherText, char *outputText);
 
-void main(){
+int main(){
    FILE *input, *output;
    char cypherText[1024], outputText[1024];
    int i = 0, selector, rotationAmount;
@@ -26,7 +28,8 @@ void main(){
       i++;
    }
 
-   printf("1. Rotation Cypher Encryption\n2. Rotation Cypher Decryption\n3. Exit Programme\n4. UNDEFINED\n");
+   printf("\n1. Rotation Cypher Encryption\n2. Rotation Cypher Decryption\n");
+   printf("3. Substitution Cypher Encryption\n4. Substitution Cypher Decryption\n");
    printf("\nPlease Make a Selection: \n");
    scanf("%d", &selector);
 
@@ -45,17 +48,15 @@ void main(){
          encryptSubstitutionCypher(cypherText, outputText);
          break;
       case 4:
-         printf("Case 4.\n");
+         decryptSubstitutionCypher(cypherText, outputText);
          break;
       default:
          printf("Please Enter a Valid Selection.\n");
          break;
    }
+   for (i = 0; outputText[i] != '\0'; i++)
+      printf("%c", outputText[i]);
 
-   // Test output
- //  for (i = 0; cypherText[i] != '\0'; i++){
-   //   printf("%c", outputText[i]);
-  // }
 }
 
 void encryptRotationCypher(const char *cypherText, char *outputText, int rotationAmount){ // e(x) = (m + k)(mod 26)
@@ -98,14 +99,22 @@ void decryptRotationCypher(const char *cypherText, char *outputText, int rotatio
 
 void encryptSubstitutionCypher(const char *cypherText, char *outputText){
    const char sub[26] = {"QAZXSWEDCVFRTGBNHYUJMKILOP"};
-   const char orig[26] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
+   char altered[26];
+   int position[1024];
+
    int i;
 
-   for (i = 0; sub[i] != '\0'; i++){
-      printf("%c", sub[i]);
+   for (i = 0; cypherText[i] != '\0'; i++){
+      if (cypherText[i] >= 'A' && cypherText[i] <= 'Z') {
+         position[i] = cypherText[i] - 65;
+         outputText[i] = sub[position[i]];
+      }
+      else {
+         outputText[i] = cypherText[i];
+      }
    }
 }
 
 void decryptSubstitutionCypher(const char *cypherText, char *outputText){
-
+   printf("UNDER CONSTRUCTION");
 }
