@@ -13,6 +13,7 @@ void decryptSubstitutionCipher(const char *cipherText, char *outputText);
 
 int main() {
    FILE *input, *output;
+   const char EOL = '\n';
    char cipherText[1024], outputText[1024];
    int i, selector, rotationAmount;
 
@@ -23,8 +24,7 @@ int main() {
       perror("File Input");
 
    // Read input into char array cipherText.
-   while (!feof(input)) {
-      fscanf(input, "%c", &cipherText[i]);
+   while (fgets(cipherText, sizeof(cipherText), input)) {
       i++;
    }
 
@@ -72,6 +72,7 @@ int main() {
       printf("%c", outputText[i]);
       fprintf(output, "%c", outputText[i]);
    }
+   fclose(stdin);
 }
 
 void encryptRotationCipher(const char *cipherText, char *outputText, int rotationAmount) { // e(x) = (m + k)(mod 26)
