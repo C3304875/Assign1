@@ -5,15 +5,16 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
-void encryptRotationCipher(const char *messageText, char *outputText, int key);
-void decryptRotationCipher(const char *messageText, char *outputText, int rotationAmount);
-void encryptSubstitutionCipher(const char *messageText, const char *key, char *outputText);
-void decryptSubstitutionCipher(const char *messageText, const char *key, char *outputText);
+int encryptRotationCipher(const char *messageText, char *outputText, int rotationAmount);
+int decryptRotationCipher(const char *messageText, char *outputText, int rotationAmount);
+int encryptSubstitutionCipher(const char *messageText, const char *key, char *outputText);
+int decryptSubstitutionCipher(const char *messageText, const char *key, char *outputText);
 
 int main() {
    FILE *input, *output;
-   char messageText[1024], outputText[1024], scanInput[2048], key[27];
+   char messageText[1024], outputText[1024], scanInput[2048], key[128], *ptr;
    int i = 0, j = 0, selector, rotationAmount, nCount = 0;
 
    // Initialise input & output files.
@@ -23,7 +24,7 @@ int main() {
       perror("File Input");
 
    // Read input into char array messageText.
-   while (!feof(input)){
+   while (!feof(input)) {
       fscanf(input, "%c", &scanInput[i]);
       if (scanInput[i] == '\n') {
          nCount++;
@@ -37,58 +38,86 @@ int main() {
       i++;
    }
 
+   rotationAmount = strtol(key, &ptr, 10);
+
    printf("\n1. Rotation Cipher Encryption\n2. Rotation Cipher Decryption\n");
    printf("3. Substitution Cipher Encryption\n4. Substitution Cipher Decryption\n");
    printf("\nPlease Make a Selection: \n");
    scanf("%d", &selector);
+   while (selector < 1 || selector > 4) {
+      printf("\nPlease select 1, 2, 3 or 4: \n");
+      scanf("%d", &selector);
+   }
 
    switch (selector) {
+
       case 1:
-         printf(" \nKey: %s", key);
-         encryptRotationCipher(messageText, outputText, key);
+         printf("\nKey: %d\n\n", rotationAmount);
+         encryptRotationCipher(messageText, outputText, rotationAmount);
          break;
       case 2:
-         printf("1. Decipher with key\n2. Decipher without key\n");
+         printf("\n1. Decipher with key\n2. Decipher without key\n");
          scanf("%d", &selector);
+         while (selector != 1 && selector != 2) {
+            printf("\nPlease select 1 or 2: \n");
+            scanf("%d", &selector);
+         }
          if (selector == 1) {
-            printf("Please enter rotation amount between 0 & 25:\n");
-            scanf("%d", &rotationAmount);
+            printf("Key: %d\n", rotationAmount);
             decryptRotationCipher(messageText, outputText, rotationAmount);
             break;
          }
-         else {
+         if (selector == 2) {
             rotationAmount = 0;
             decryptRotationCipher(messageText, outputText, rotationAmount);
             while (strstr(outputText, " A ") == NULL && strstr(outputText, " THE ") == NULL) {
                rotationAmount++;
                decryptRotationCipher(messageText, outputText, rotationAmount);
             }
+            printf("\nGenerated Key: %d\n\n", rotationAmount);
             break;
          }
       case 3:
+         if (key[16] < 65 || key[16] > 90) {
+            printf("\nERROR: INCORRECT KEY FORMAT");
+            printf("\nKey: %s\n", key);
+            exit(1);
+         }
          encryptSubstitutionCipher(messageText, key, outputText);
+         printf("\nKey: %s\n\n", key);
          break;
       case 4:
+         if (key[16] < 65 || key[16] > 90) {
+            printf("\nERROR: INCORRECT KEY FORMAT");
+            printf("\nKey: %s\n", key);
+            exit(1);
+         }
          decryptSubstitutionCipher(messageText, key, outputText);
-         break;
-      default:
-         printf("Please Enter a Valid Selection.\n");
+         printf("\nKey: %s\n\n", key);
          break;
    }
-   printf("\n");
+   printf("Message Text: \n");
+   for (i = 0; messageText[i] != '\0'; i++) {
+      printf("%c", messageText[i]);
+   }
+   printf("\n\n");
+   printf("Output Text: \n");
    for (i = 0; messageText[i] != '\0'; i++) {
       printf("%c", outputText[i]);
       fprintf(output, "%c", outputText[i]);
    }
+   printf("\n");
    fclose(stdin);
+
+   return 0;
 }
 
-void encryptRotationCipher(const char *messageText, char *outputText, int key) { // e(x) = (m + k)(mod 26)
+int encryptRotationCipher(const char *messageText, char *outputText, int rotationAmount) { // e(x) = (m + k)(mod 26)
    int i;
 
    for (i = 0; messageText[i] != '\0'; i++) {
       if (messageText[i] >= 'A' && messageText[i] <= 'Z') {
-         outputText[i] = messageText[i] + (key % 26);
+         outputText[i] = messageText[i] + (rotationAmount % 26);
          if (outputText[i] > 'Z')
             outputText[i] = ('A' - 1 + (outputText[i] - 'Z') % 26);
          if (outputText[i] < 'A')
@@ -97,9 +126,10 @@ void encryptRotationCipher(const char *messageText, char *outputText, int key) {
       else
          outputText[i] = messageText[i]; // Skips any non-alphabet character
    }
+   return 0;
 }
 
-void decryptRotationCipher(const char *messageText, char *outputText, int rotationAmount) { // d(c) = (c − k)(mod 26)
+int decryptRotationCipher(const char *messageText, char *outputText, int rotationAmount) { // d(c) = (c − k)(mod 26)
    int i;
 
    for (i = 0; messageText[i] != '\0'; i++) {
@@ -113,9 +143,10 @@ void decryptRotationCipher(const char *messageText, char *outputText, int rotati
       else
          outputText[i] = messageText[i]; // Skips any non-alphabet characters
    }
+   return 0;
 }
 
-void encryptSubstitutionCipher(const char *messageText, const char *key, char *outputText){
+int encryptSubstitutionCipher(const char *messageText, const char *key, char *outputText) {
    int position[1024], i;
 
    for (i = 0; messageText[i] != '\0'; i++) {
@@ -126,9 +157,10 @@ void encryptSubstitutionCipher(const char *messageText, const char *key, char *o
       else
          outputText[i] = messageText[i];
    }
+   return 0;
 }
 
-void decryptSubstitutionCipher(const char *messageText, const char *key, char *outputText) {
+int decryptSubstitutionCipher(const char *messageText, const char *key, char *outputText) {
    const char orig[26] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
    char oldLetter, newLetter;
 
@@ -156,4 +188,5 @@ void decryptSubstitutionCipher(const char *messageText, const char *key, char *o
       else
          outputText[i] = messageText[i];
    }
+   return 0;
 }
