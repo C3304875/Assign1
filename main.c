@@ -1,7 +1,16 @@
-// Matthew Maiden
-// C3304875
-// ENGG1003 Assignment 1
-// Specification Document: https://uonline.newcastle.edu.au/bbcswebdav/pid-4089777-dt-content-rid-20660523_1/courses/CRS.126462.2019.S1/project1%281%29.pdf
+/* Matthew Maiden
+ * C3304875
+ * ENGG1003 Assignment 1
+ *
+ * This program receives an ASCII message input and performs encryption/decryption.
+ * The key must be appropriate to the desired process. For example:
+ * An integer value key (0-26) must be used to perform a rotation cipher.
+ * A substitution alphabet key must be used to perform a substitution cipher.
+ *
+ * Rules for input.txt:
+ * Line 1: Message text to be encrypted/decrypted.
+ * Line 2: Key to be used.
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -15,15 +24,15 @@ int decryptSubstitutionCipher(const char *messageText, const char *key, char *ou
 int main() {
    FILE *input, *output;
    char messageText[1024], outputText[1024], scanInput[2048], key[128], *ptr;
-   int i = 0, j = 0, selector, rotationAmount, nCount = 0;
+   int i = 0, j = 0, selector, rotationAmount, nCount = 0, error;
 
-   // Initialise input & output files.
+   /* Initialise input & output files. */
    output = fopen("Resources/output.txt", "w");
    input = fopen("Resources/input.txt", "r");
    if (input == NULL)
       perror("File Input");
 
-   // Read input into char array messageText.
+   /* Read input into char array messageText. */
    while (!feof(input)) {
       fscanf(input, "%c", &scanInput[i]);
       if (scanInput[i] == '\n') {
@@ -38,38 +47,39 @@ int main() {
       i++;
    }
 
-   rotationAmount = strtol(key, &ptr, 10);
+   rotationAmount = strtol(key, &ptr, 10); /* Assign the int value of "key" to rotationAmount */
 
    printf("\n1. Rotation Cipher Encryption\n2. Rotation Cipher Decryption\n");
    printf("3. Substitution Cipher Encryption\n4. Substitution Cipher Decryption\n");
    printf("\nPlease Make a Selection: \n");
-   scanf("%d", &selector);
-   while (selector < 1 || selector > 4) {
+   scanf("%d", &selector); /* Variable to store the users choice */
+   while (selector < 1 || selector > 4) { /* Basic error checking */
       printf("\nPlease select 1, 2, 3 or 4: \n");
       scanf("%d", &selector);
    }
 
    switch (selector) {
-
       case 1:
          printf("\nKey: %d\n\n", rotationAmount);
          encryptRotationCipher(messageText, outputText, rotationAmount);
          break;
       case 2:
+         /* Task selection from stdin, uses predefined key if given */
          printf("\n1. Decipher with key\n2. Decipher without key\n");
          scanf("%d", &selector);
-         while (selector != 1 && selector != 2) {
+         while (selector != 1 && selector != 2) { /* Basic error checking */
             printf("\nPlease select 1 or 2: \n");
             scanf("%d", &selector);
          }
-         if (selector == 1) {
-            printf("Key: %d\n", rotationAmount);
+         if (selector == 1) { /* Decrypt using a predefined key */
+            printf("\nKey: %d\n\n", rotationAmount);
             decryptRotationCipher(messageText, outputText, rotationAmount);
             break;
          }
-         if (selector == 2) {
+         if (selector == 2) { /* Incrementally generate a key and test it */
             rotationAmount = 0;
             decryptRotationCipher(messageText, outputText, rotationAmount);
+            /* Check existence of string within new output, exit if found */
             while (strstr(outputText, " A ") == NULL && strstr(outputText, " THE ") == NULL) {
                rotationAmount++;
                decryptRotationCipher(messageText, outputText, rotationAmount);
@@ -78,76 +88,82 @@ int main() {
             break;
          }
       case 3:
-         if (key[16] < 65 || key[16] > 90) {
-            printf("\nERROR: INCORRECT KEY FORMAT");
-            printf("\nKey: %s\n", key);
-            exit(1);
-         }
-         encryptSubstitutionCipher(messageText, key, outputText);
+         /* Assign the return value to "error", exit if 1, output if 0 */
+         error = encryptSubstitutionCipher(messageText, key, outputText);
+         if (error == 1)
+            exit(error);
          printf("\nKey: %s\n\n", key);
          break;
       case 4:
-         if (key[16] < 65 || key[16] > 90) {
-            printf("\nERROR: INCORRECT KEY FORMAT");
-            printf("\nKey: %s\n", key);
-            exit(1);
-         }
-         decryptSubstitutionCipher(messageText, key, outputText);
+         /* Assign the return value to "error", exit if 1, output if 0 */
+         error = decryptSubstitutionCipher(messageText, key, outputText);
+         if (error == 1)
+            exit(error);
          printf("\nKey: %s\n\n", key);
          break;
    }
+
    printf("Message Text: \n");
    for (i = 0; messageText[i] != '\0'; i++) {
       printf("%c", messageText[i]);
    }
+
    printf("\n\n");
    printf("Output Text: \n");
    for (i = 0; messageText[i] != '\0'; i++) {
       printf("%c", outputText[i]);
       fprintf(output, "%c", outputText[i]);
    }
+
    printf("\n");
    fclose(stdin);
 
-   return 0;
+   return error;
 }
 
-int encryptRotationCipher(const char *messageText, char *outputText, int rotationAmount) { // e(x) = (m + k)(mod 26)
+int encryptRotationCipher(const char *messageText, char *outputText, int rotationAmount) { /* e(x) = (m + k)(mod 26)*/
    int i;
 
    for (i = 0; messageText[i] != '\0'; i++) {
-      if (messageText[i] >= 'A' && messageText[i] <= 'Z') {
-         outputText[i] = messageText[i] + (rotationAmount % 26);
+      if (messageText[i] >= 'A' && messageText[i] <= 'Z') { /* Only process uppercase characters */
+         outputText[i] = messageText[i] + (rotationAmount % 26); /* Run algorithm on the character */
          if (outputText[i] > 'Z')
             outputText[i] = ('A' - 1 + (outputText[i] - 'Z') % 26);
          if (outputText[i] < 'A')
             outputText[i] = ('Z' - 1 + (outputText[i] - 'A') % 26);
       }
       else
-         outputText[i] = messageText[i]; // Skips any non-alphabet character
+         outputText[i] = messageText[i]; /* Skip any non-alphabet character */
    }
    return 0;
 }
 
-int decryptRotationCipher(const char *messageText, char *outputText, int rotationAmount) { // d(c) = (c − k)(mod 26)
+int decryptRotationCipher(const char *messageText, char *outputText, int rotationAmount) { /* d(c) = (c − k)(mod 26) */
    int i;
 
    for (i = 0; messageText[i] != '\0'; i++) {
-      if (messageText[i] >= 'A' && messageText[i] <= 'Z') {
-         outputText[i] = messageText[i] - (rotationAmount % 26);
+      if (messageText[i] >= 'A' && messageText[i] <= 'Z') { /* Only process uppercase characters */
+         outputText[i] = messageText[i] - (rotationAmount % 26); /* Run algorithm on the character */
          if (outputText[i] > 'Z')
             outputText[i] = ('A' + 1 + (outputText[i] - 'Z') % 26);
          if (outputText[i] < 'A')
             outputText[i] = ('Z' + 1 + (outputText[i] - 'A') % 26);
       }
       else
-         outputText[i] = messageText[i]; // Skips any non-alphabet characters
+         outputText[i] = messageText[i]; /* Skip any non-alphabet characters */
    }
    return 0;
 }
 
 int encryptSubstitutionCipher(const char *messageText, const char *key, char *outputText) {
    int position[1024], i;
+
+   /* Perform basic error checking on an arbitrary value of "key" */
+   if (key[16] < 65 || key[16] > 90) {
+      printf("\nError: Incorrect key format");
+      printf("\nKey: %s\n", key);
+      return 1; /* Exit function, returning 1 to "error" */
+   }
 
    for (i = 0; messageText[i] != '\0'; i++) {
       if (messageText[i] >= 'A' && messageText[i] <= 'Z') {
@@ -163,6 +179,13 @@ int encryptSubstitutionCipher(const char *messageText, const char *key, char *ou
 int decryptSubstitutionCipher(const char *messageText, const char *key, char *outputText) {
    const char orig[26] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
    char oldLetter, newLetter;
+
+   /* Perform basic error checking on an arbitrary value of "key" */
+   if (key[16] < 65 || key[16] > 90) {
+      printf("\nError: Incorrect key format");
+      printf("\nKey: %s\n", key);
+      return 1; /* Exit function, returning 1 to "error" */
+   }
 
    int i, j, k = 0;
 
