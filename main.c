@@ -57,6 +57,7 @@ int main() {
    switch (selector) {
       case 1:
          printf("\nKey: %d\n\n", rotationAmount);
+         fprintf(output, "Key: %d\n\n", rotationAmount);
          encryptRotationCipher(messageText, outputText, rotationAmount);
          break;
       case 2:
@@ -69,6 +70,7 @@ int main() {
          }
          if (selector == 1) { /* Call function using a predefined key */
             printf("\nKey: %d\n\n", rotationAmount);
+            fprintf(output, "Key: %d\n\n", rotationAmount);
             decryptRotationCipher(messageText, outputText, rotationAmount);
             break;
          }
@@ -81,6 +83,7 @@ int main() {
                decryptRotationCipher(messageText, outputText, rotationAmount);
             }
             printf("\nGenerated Key: %d\n\n", rotationAmount);
+            fprintf(output, "Generated Key: %d\n\n", rotationAmount);
             break;
          }
       case 3:
@@ -89,6 +92,7 @@ int main() {
          if (error == 1)
             exit(error);
          printf("\nKey: %.26s\n\n", key);
+         fprintf(output, "Key: %.26s\n\n", key);
          break;
       case 4:
          /* Assign the return value to "error", exit if 1, output if 0 */
@@ -96,14 +100,18 @@ int main() {
          if (error == 1)
             exit(error);
          printf("\nKey: %.26s\n\n", key);
+         fprintf(output, "Key: %.26s\n\n", key);
          break;
    }
 
    printf("Message Text: \n");
+   fprintf(output, "Message Text: \n");
    for (i = 0; messageText[i] != '\0'; i++) {
       printf("%c", messageText[i]);
+      fprintf(output, "%c", messageText[i]);
    }
    printf("\nOutput Text: \n");
+   fprintf(output, "\nOutput Text: \n");
    for (i = 0; messageText[i] != '\0'; i++) {
       printf("%c", outputText[i]);
       fprintf(output, "%c", outputText[i]);
