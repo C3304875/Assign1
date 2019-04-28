@@ -20,15 +20,16 @@ int encryptRotationCipher(const char *messageText, char *outputText, int rotatio
 int decryptRotationCipher(const char *messageText, char *outputText, int rotationAmount);
 int encryptSubstitutionCipher(const char *messageText, const char *key, char *outputText);
 int decryptSubstitutionCipher(const char *messageText, const char *key, char *outputText);
+int decryptSubstitutionKeyless(const char *messageText, char *outputText);
 
 int main() {
    FILE *input, *output;
-   char messageText[1024], outputText[1024], scanInput[2048], key[128], *ptr;
+   char messageText[1024], outputText[1024], scanInput[2048], key[27], *ptr;
    int i = 0, j = 0, selector, rotationAmount, nCount = 0, error;
 
    /* Initialise input & output files. */
-   output = fopen("Resources/output.txt", "w");
-   input = fopen("Resources/input.txt", "r");
+   output = fopen("resources/output.txt", "w");
+   input = fopen("resources/input.txt", "r");
    if (input == NULL)
       perror("File Input");
 
@@ -38,7 +39,7 @@ int main() {
       if (scanInput[i] == '\n') {
          nCount++;
       }
-      if (nCount == 0)
+      if (nCount == 0) /* nCount used to keep track of how many newline characters */
          messageText[i] = scanInput[i];
       if (nCount == 1 && scanInput[i] != '\n') {
          key[j] = scanInput[i];
@@ -50,6 +51,7 @@ int main() {
    rotationAmount = strtol(key, &ptr, 10); /* Assign the int value of "key" to rotationAmount */
 
    printf("\n1. Rotation Cipher Encryption\n2. Rotation Cipher Decryption\n");
+
    printf("3. Substitution Cipher Encryption\n4. Substitution Cipher Decryption\n");
    printf("\nPlease Make a Selection: \n");
    scanf("%d", &selector); /* Variable to store the users choice */
@@ -71,7 +73,7 @@ int main() {
             printf("\nPlease select 1 or 2: \n");
             scanf("%d", &selector);
          }
-         if (selector == 1) { /* Decrypt using a predefined key */
+         if (selector == 1) { /* Call function using a predefined key */
             printf("\nKey: %d\n\n", rotationAmount);
             decryptRotationCipher(messageText, outputText, rotationAmount);
             break;
@@ -211,5 +213,10 @@ int decryptSubstitutionCipher(const char *messageText, const char *key, char *ou
       else
          outputText[i] = messageText[i];
    }
+   return 0;
+}
+
+int decryptSubstitutionKeyless(const char *messageText, char *outputText){
+
    return 0;
 }
