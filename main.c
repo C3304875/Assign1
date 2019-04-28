@@ -23,8 +23,8 @@ int decryptSubstitutionCipher(const char *messageText, const char *key, char *ou
 
 int main() {
    FILE *input, *output;
-   char messageText[1024], outputText[1024], scanInput[2048], key[28], *ptr;
-   int i = 0, j = 0, selector, rotationAmount, nCount = 0, error;
+   char messageText[1024], outputText[1024], scanInput[1024], key[26];
+   int i, selector, rotationAmount, error;
 
    /* Initialise input & output files. */
    output = fopen("resources/output.txt", "w");
@@ -34,20 +34,15 @@ int main() {
 
    /* Read input into char array messageText. */
    while (!feof(input)) {
-      fscanf(input, "%c", &scanInput[i]);
-      if (scanInput[i] == '\n') {
-         nCount++;
+      for (i = 0; fscanf(input, "%c", &messageText[i]) != -1; i++){
+         if (messageText[i] == '\n')
+            break;
       }
-      if (nCount == 0) /* nCount used to keep track of how many newline characters */
-         messageText[i] = scanInput[i];
-      if (nCount == 1 && scanInput[i] != '\n') {
-         key[j] = scanInput[i];
-         j++;
+      for (i = 0; fscanf(input, "%c", &key[i]) != -1; i++){
       }
-      i++;
    }
 
-   rotationAmount = strtol(key, &ptr, 10); /* Assign the int value of "key" to rotationAmount */
+   rotationAmount = strtol(key, &scanInput, 10); /* Assign the int value of "key" to rotationAmount */
 
    printf("\n1. Rotation Cipher Encryption\n2. Rotation Cipher Decryption\n");
 
@@ -93,14 +88,14 @@ int main() {
          error = encryptSubstitutionCipher(messageText, key, outputText);
          if (error == 1)
             exit(error);
-         printf("\nKey: %s\n\n", key);
+         printf("\nKey: %.26s\n\n", key);
          break;
       case 4:
          /* Assign the return value to "error", exit if 1, output if 0 */
          error = decryptSubstitutionCipher(messageText, key, outputText);
          if (error == 1)
             exit(error);
-         printf("\nKey: %s\n\n", key);
+         printf("\nKey: %.26s\n\n", key);
          break;
    }
 
@@ -108,16 +103,13 @@ int main() {
    for (i = 0; messageText[i] != '\0'; i++) {
       printf("%c", messageText[i]);
    }
-
-   printf("\n\n");
-   printf("Output Text: \n");
+   printf("\nOutput Text: \n");
    for (i = 0; messageText[i] != '\0'; i++) {
       printf("%c", outputText[i]);
       fprintf(output, "%c", outputText[i]);
    }
 
-   printf("\n");
-   fclose(stdin);
+   fclose(input);
 
    return error;
 }
@@ -178,7 +170,7 @@ int encryptSubstitutionCipher(const char *messageText, const char *key, char *ou
 }
 
 int decryptSubstitutionCipher(const char *messageText, const char *key, char *outputText) {
-   const char orig[26] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
+   const char orig[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
    char oldLetter, newLetter;
 
    /* Perform basic error checking on an arbitrary value of "key" */
@@ -194,13 +186,12 @@ int decryptSubstitutionCipher(const char *messageText, const char *key, char *ou
       oldLetter = key[i];
       newLetter = orig[i];
       if (messageText[i] >= 'A' && messageText[i] <= 'Z') {
-         for (j = 0; j < 1025; j++) {
+         for (j = 0; j < 2048; j++) {
             if (messageText[i] == oldLetter) {
                outputText[i] = newLetter;
                break;
             }
             else {
-               j++;
                oldLetter = key[k];
                newLetter = orig[k];
                k++;
