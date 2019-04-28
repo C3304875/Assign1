@@ -20,11 +20,10 @@ int encryptRotationCipher(const char *messageText, char *outputText, int rotatio
 int decryptRotationCipher(const char *messageText, char *outputText, int rotationAmount);
 int encryptSubstitutionCipher(const char *messageText, const char *key, char *outputText);
 int decryptSubstitutionCipher(const char *messageText, const char *key, char *outputText);
-int decryptSubstitutionKeyless(const char *messageText, char *outputText);
 
 int main() {
    FILE *input, *output;
-   char messageText[1024], outputText[1024], scanInput[2048], key[27], *ptr;
+   char messageText[1024], outputText[1024], scanInput[2048], key[28], *ptr;
    int i = 0, j = 0, selector, rotationAmount, nCount = 0, error;
 
    /* Initialise input & output files. */
@@ -213,10 +212,5 @@ int decryptSubstitutionCipher(const char *messageText, const char *key, char *ou
       else
          outputText[i] = messageText[i];
    }
-   return 0;
-}
-
-int decryptSubstitutionKeyless(const char *messageText, char *outputText){
-
    return 0;
 }
