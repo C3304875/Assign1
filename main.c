@@ -27,8 +27,8 @@ int main() {
    int i, selector, rotationAmount, error;
 
    /* Initialise input & output files. */
-   output = fopen("resources/output.txt", "w");
    input = fopen("resources/input.txt", "r");
+   output = fopen("resources/output.txt", "w");
    if (input == NULL)
       perror("File Input");
 
@@ -50,7 +50,7 @@ int main() {
    printf("\nPlease Make a Selection: \n");
    scanf("%d", &selector); /* Variable to store the users choice */
    while (selector < 1 || selector > 4) { /* Basic error checking */
-      printf("\nPlease select 1, 2, 3 or 4: \n");
+      printf("\nPlease select 1, 2, 3, 4 or 5: \n");
       scanf("%d", &selector);
    }
 
