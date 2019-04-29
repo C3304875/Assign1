@@ -20,7 +20,6 @@ int encryptRotationCipher(const char *messageText, char *outputText, int rotatio
 int decryptRotationCipher(const char *messageText, char *outputText, int rotationAmount);
 int encryptSubstitutionCipher(const char *messageText, const char *key, char *outputText);
 int decryptSubstitutionCipher(const char *messageText, const char *key, char *outputText);
-int decryptSubstitutionKeyless(const char *messageText, char *outputText);
 
 int main() {
    FILE *input, *output;
@@ -103,13 +102,8 @@ int main() {
          printf("\nKey: %.26s\n\n", key);
          fprintf(output, "Key: %.26s\n\n", key);
          break;
-      case 5:
-         error = decryptSubstitutionKeyless(messageText, outputText);
-         if (error == 1)
-            exit(error);
-         break;
    }
-/*
+
    printf("Message Text: \n");
    fprintf(output, "Message Text: \n");
    for (i = 0; messageText[i] != '\0'; i++) {
@@ -122,7 +116,7 @@ int main() {
       printf("%c", outputText[i]);
       fprintf(output, "%c", outputText[i]);
    }
-*/
+
    fclose(input);
 
    return error;
@@ -134,10 +128,10 @@ int encryptRotationCipher(const char *messageText, char *outputText, int rotatio
    for (i = 0; messageText[i] != '\0'; i++) {
       if (messageText[i] >= 'A' && messageText[i] <= 'Z') { /* Only process uppercase characters */
          outputText[i] = messageText[i] + (rotationAmount % 26); /* Run algorithm on the character */
-         if (outputText[i] > 'Z')
-            outputText[i] = ('A' - 1 + (outputText[i] - 'Z') % 26);
-         if (outputText[i] < 'A')
-            outputText[i] = ('Z' - 1 + (outputText[i] - 'A') % 26);
+         if (outputText[i] > 'Z')                                                /* A simple algorithm is used */
+            outputText[i] = ('A' - 1 + (outputText[i] - 'Z') % 26);              /* to change the value of a   */
+         if (outputText[i] < 'A')                                                /* character with reference to*/
+            outputText[i] = ('Z' - 1 + (outputText[i] - 'A') % 26);              /* a "key" which modifies 'k'.*/
       }
       else
          outputText[i] = messageText[i]; /* Skip any non-alphabet character */
@@ -151,10 +145,10 @@ int decryptRotationCipher(const char *messageText, char *outputText, int rotatio
    for (i = 0; messageText[i] != '\0'; i++) {
       if (messageText[i] >= 'A' && messageText[i] <= 'Z') { /* Only process uppercase characters */
          outputText[i] = messageText[i] - (rotationAmount % 26); /* Run algorithm on the character */
-         if (outputText[i] > 'Z')
-            outputText[i] = ('A' + 1 + (outputText[i] - 'Z') % 26);
-         if (outputText[i] < 'A')
-            outputText[i] = ('Z' + 1 + (outputText[i] - 'A') % 26);
+         if (outputText[i] > 'Z')                                                /* This function receives a char   */
+            outputText[i] = ('A' + 1 + (outputText[i] - 'Z') % 26);              /* from messageText[] and performs */
+         if (outputText[i] < 'A')                                                /* the above algorithm to achieve  */
+            outputText[i] = ('Z' + 1 + (outputText[i] - 'A') % 26);              /* an altered outputText[]         */
       }
       else
          outputText[i] = messageText[i]; /* Skip any non-alphabet characters */
@@ -166,16 +160,16 @@ int encryptSubstitutionCipher(const char *messageText, const char *key, char *ou
    int position[1024], i;
 
    /* Perform basic error checking on an arbitrary value of "key" */
-   if (key[16] < 65 || key[16] > 90) {
-      printf("\nError: Incorrect key format");
-      printf("\nKey: %s\n", key);
-      return 1; /* Exit function, returning 1 to "error" */
-   }
-
-   for (i = 0; messageText[i] != '\0'; i++) {
-      if (messageText[i] >= 'A' && messageText[i] <= 'Z') {
-         position[i] = messageText[i] - 65;
-         outputText[i] = key[position[i]];
+   if (key[16] < 65 || key[16] > 90) {                              /* This function receives a string  */
+      printf("\nError: Incorrect key format");                      /* Once received, a character from  */
+      printf("\nKey: %s\n", key);                                   /* Once received, the character is  */
+      return 1; /* Exit function, returning 1 to "error" */         /* checked and then given a         */
+   }                                                                /* position in an array. That       */
+                                                                    /* position is then transferred over*/
+   for (i = 0; messageText[i] != '\0'; i++) {                       /* to a new array containing a key. */
+      if (messageText[i] >= 'A' && messageText[i] <= 'Z') {         /* A new string is then created     */
+         position[i] = messageText[i] - 65;                         /* from that array with reference   */
+         outputText[i] = key[position[i]];                          /* to the characters original index.*/
       }
       else
          outputText[i] = messageText[i];
@@ -190,16 +184,16 @@ int decryptSubstitutionCipher(const char *messageText, const char *key, char *ou
    /* Perform basic error checking on an arbitrary value of "key" */
    if (key[16] < 65 || key[16] > 90) {
       printf("\nError: Incorrect key format");
-      printf("\nKey: %s\n", key);
-      return 1; /* Exit function, returning 1 to "error" */
-   }
-
-   int i, j, k = 0;
-
-   for (i = 0; messageText[i] != '\0'; i++) {
-      oldLetter = key[i]; /*  */
-      newLetter = orig[i];
-      if (messageText[i] >= 'A' && messageText[i] <= 'Z') {
+      printf("\nKey: %s\n", key);                                   /* This function receives a string  */
+      return 1; /* Exit function, returning 1 to "error" */         /* Once received, a character from  */
+   }                                                                /* the message is cross-referenced  */
+                                                                    /* with a character from the orig[] */
+   int i, j, k = 0;                                                 /* array. If the result is true,    */
+                                                                    /*  the letter from orig[] is put   */
+   for (i = 0; messageText[i] != '\0'; i++) {                       /* into outputText[]. If not true,  */
+      oldLetter = key[i]; // Set a letter to check                  /* oldLetter & newLetter are        */
+      newLetter = orig[i]; // Check against this letter             /* incremented. 'k' is used to keep */
+      if (messageText[i] >= 'A' && messageText[i] <= 'Z') {         /* track of those increments.       */
          for (j = 0; j < 2048; j++) {
             if (messageText[i] == oldLetter) {
                outputText[i] = newLetter;
@@ -215,67 +209,7 @@ int decryptSubstitutionCipher(const char *messageText, const char *key, char *ou
          }
       }
       else
-         outputText[i] = messageText[i];
+         outputText[i] = messageText[i]; /* Skip non-alphabet characters */
    }
-   return 0;
-}
-
-int decryptSubstitutionKeyless(const char *messageText, char *outputText){
-   const char orig[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
-   const char freq[] = {"EARIOTNSLCUDPMHGBFYWKVXZJQ"};
-   char new[26] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
-
-   int i, j = 0, frequency[26] = {0}, temp, elementNo = 0;
-
-   for (i = 0; messageText[i] != '\n'; i++) {
-      if (messageText[i] >= 'A' && messageText[i] <= 'Z') {
-         while (messageText[i] != '\n') {
-            if (messageText[i] == orig[j]) {
-               frequency[j]++;
-               break;
-            }
-            else {
-               j++;
-            }
-            if (j > 25)
-               j = 0;
-         }
-      }
-   }
-
-   for (i = 0; i < 26; i++) {
-      for (j = 0; j < 25; j++) {
-         if (frequency[j] < frequency[j + 1]){
-            temp = frequency[j];
-            frequency[j] = frequency[j + 1];
-            frequency[j+1] = temp;
-         }
-      }
-   }
-
-   for (i = 0; i < 1000; i++) {
-      while (1) {
-         if (frequency[i] == elementNo) {
-            new[i] = freq[i];
-            printf("%d", new[i]);
-            elementNo = 0;
-            break;
-         }
-         else
-            elementNo++;
-      }
-   }
-
-
-
-
-   for (i = 0; messageText[i] != '\n'; i++){
-      if (messageText[i] >= 'A' && messageText[i] <= 'Z') {
-         outputText[i] = messageText[i];
-      }
-      else
-         outputText[i] = messageText[i];
-   }
-
    return 0;
 }
