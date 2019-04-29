@@ -37,9 +37,9 @@ int main() {
    while (!feof(input)) {
       for (i = 0; fscanf(input, "%c", &messageText[i]) != -1; i++){
          if (messageText[i] == '\n')
-            break;
+            break; /* Exit loop if '\n' found */
       }
-      for (i = 0; fscanf(input, "%c", &key[i]) != -1; i++){
+      for (i = 0; fscanf(input, "%c", &key[i]) != -1; i++){ /* Scan key until end of file */
       }
    }
 
@@ -197,7 +197,7 @@ int decryptSubstitutionCipher(const char *messageText, const char *key, char *ou
    int i, j, k = 0;
 
    for (i = 0; messageText[i] != '\0'; i++) {
-      oldLetter = key[i];
+      oldLetter = key[i]; /*  */
       newLetter = orig[i];
       if (messageText[i] >= 'A' && messageText[i] <= 'Z') {
          for (j = 0; j < 2048; j++) {
@@ -221,12 +221,11 @@ int decryptSubstitutionCipher(const char *messageText, const char *key, char *ou
 }
 
 int decryptSubstitutionKeyless(const char *messageText, char *outputText){
-   FILE *wordlist = fopen("resources/wordlist.txt", "r");
    const char orig[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
    const char freq[] = {"EARIOTNSLCUDPMHGBFYWKVXZJQ"};
+   char new[26] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
 
-   char checkWordMess[500], checkWordList[4], *result, newWord[500];
-   int i, j, frequency[26];
+   int i, j = 0, frequency[26] = {0}, temp, elementNo = 0;
 
    for (i = 0; messageText[i] != '\n'; i++) {
       if (messageText[i] >= 'A' && messageText[i] <= 'Z') {
@@ -244,8 +243,38 @@ int decryptSubstitutionKeyless(const char *messageText, char *outputText){
       }
    }
 
-   for (i = 0; messageText[i] != '\n'; i++){
+   for (i = 0; i < 26; i++) {
+      for (j = 0; j < 25; j++) {
+         if (frequency[j] < frequency[j + 1]){
+            temp = frequency[j];
+            frequency[j] = frequency[j + 1];
+            frequency[j+1] = temp;
+         }
+      }
+   }
 
+   for (i = 0; i < 1000; i++) {
+      while (1) {
+         if (frequency[i] == elementNo) {
+            new[i] = freq[i];
+            printf("%d", new[i]);
+            elementNo = 0;
+            break;
+         }
+         else
+            elementNo++;
+      }
+   }
+
+
+
+
+   for (i = 0; messageText[i] != '\n'; i++){
+      if (messageText[i] >= 'A' && messageText[i] <= 'Z') {
+         outputText[i] = messageText[i];
+      }
+      else
+         outputText[i] = messageText[i];
    }
 
    return 0;
