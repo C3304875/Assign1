@@ -20,6 +20,7 @@ int encryptRotationCipher(const char *messageText, char *outputText, int rotatio
 int decryptRotationCipher(const char *messageText, char *outputText, int rotationAmount);
 int encryptSubstitutionCipher(const char *messageText, const char *key, char *outputText);
 int decryptSubstitutionCipher(const char *messageText, const char *key, char *outputText);
+int decryptSubstitutionKeyless(const char *messageText, char *outputText);
 
 int main() {
    FILE *input, *output;
@@ -49,7 +50,7 @@ int main() {
    printf("3. Substitution Cipher Encryption\n4. Substitution Cipher Decryption\n");
    printf("\nPlease Make a Selection: \n");
    scanf("%d", &selector); /* Variable to store the users choice */
-   while (selector < 1 || selector > 4) { /* Basic error checking */
+   while (selector < 1 || selector > 5) { /* Basic error checking */
       printf("\nPlease select 1, 2, 3, 4 or 5: \n");
       scanf("%d", &selector);
    }
@@ -102,8 +103,13 @@ int main() {
          printf("\nKey: %.26s\n\n", key);
          fprintf(output, "Key: %.26s\n\n", key);
          break;
+      case 5:
+         error = decryptSubstitutionKeyless(messageText, outputText);
+         if (error == 1)
+            exit(error);
+         break;
    }
-
+/*
    printf("Message Text: \n");
    fprintf(output, "Message Text: \n");
    for (i = 0; messageText[i] != '\0'; i++) {
@@ -116,7 +122,7 @@ int main() {
       printf("%c", outputText[i]);
       fprintf(output, "%c", outputText[i]);
    }
-
+*/
    fclose(input);
 
    return error;
@@ -211,5 +217,36 @@ int decryptSubstitutionCipher(const char *messageText, const char *key, char *ou
       else
          outputText[i] = messageText[i];
    }
+   return 0;
+}
+
+int decryptSubstitutionKeyless(const char *messageText, char *outputText){
+   FILE *wordlist = fopen("resources/wordlist.txt", "r");
+   const char orig[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
+   const char freq[] = {"EARIOTNSLCUDPMHGBFYWKVXZJQ"};
+
+   char checkWordMess[500], checkWordList[4], *result, newWord[500];
+   int i, j, frequency[26];
+
+   for (i = 0; messageText[i] != '\n'; i++) {
+      if (messageText[i] >= 'A' && messageText[i] <= 'Z') {
+         while (messageText[i] != '\n') {
+            if (messageText[i] == orig[j]) {
+               frequency[j]++;
+               break;
+            }
+            else {
+               j++;
+            }
+            if (j > 25)
+               j = 0;
+         }
+      }
+   }
+
+   for (i = 0; messageText[i] != '\n'; i++){
+
+   }
+
    return 0;
 }
